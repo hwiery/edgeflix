@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오프라인 - EdgeFlix</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #000000 0%, #141414 100%);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .logo {
+      color: #dc2626;
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 2rem;
+      text-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+    }
+
+    .icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 2rem;
+      background: linear-gradient(45deg, #374151, #4b5563);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(45deg, #dc2626, #ef4444);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #9ca3af;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .retry-btn {
+      background: linear-gradient(45deg, #dc2626, #ef4444);
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+    }
+
+    .retry-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+    }
+
+    .features {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #374151;
+    }
+
+    .features h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #f3f4f6;
+    }
+
+    .features ul {
+      list-style: none;
+      color: #9ca3af;
+    }
+
+    .features li {
+      padding: 0.3rem 0;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+
+    .features li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    .network-status {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #fca5a5;
+    }
+
+    .network-status.online {
+      background: rgba(34, 197, 94, 0.1);
+      border-color: rgba(34, 197, 94, 0.3);
+      color: #86efac;
+    }
+
+    @media (max-width: 640px) {
+      .logo {
+        font-size: 2rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .icon {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">EdgeFlix</div>
+    
+    <div class="icon">
+      📱
+    </div>
+    
+    <h1>오프라인 모드</h1>
+    
+    <p>
+      인터넷 연결이 끊어진 것 같습니다.<br>
+      연결이 복구되면 자동으로 동기화됩니다.
+    </p>
+    
+    <button class="retry-btn" onclick="retryConnection()">
+      다시 시도
+    </button>
+    
+    <div class="network-status" id="networkStatus">
+      🔴 오프라인
+    </div>
+    
+    <div class="features">
+      <h3>오프라인에서도 사용 가능한 기능</h3>
+      <ul>
+        <li>이전에 본 콘텐츠 목록</li>
+        <li>찜한 콘텐츠 목록</li>
+        <li>캐시된 이미지 및 정보</li>
+        <li>사용자 설정 및 프로필</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // 네트워크 상태 감지
+    function updateNetworkStatus() {
+      const statusElement = document.getElementById('networkStatus');
+      
+      if (navigator.onLine) {
+        statusElement.textContent = '🟢 온라인';
+        statusElement.className = 'network-status online';
+        
+        // 온라인 상태가 되면 자동으로 홈페이지로 이동
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
+      } else {
+        statusElement.textContent = '🔴 오프라인';
+        statusElement.className = 'network-status';
+      }
+    }
+
+    // 연결 재시도 함수
+    function retryConnection() {
+      updateNetworkStatus();
+      
+      if (navigator.onLine) {
+        window.location.href = '/';
+      } else {
+        // 연결 실패 시 사용자에게 알림
+        alert('아직 인터넷에 연결되지 않았습니다. 네트워크 연결을 확인해주세요.');
+      }
+    }
+
+    // 페이지 로드 시 네트워크 상태 확인
+    updateNetworkStatus();
+
+    // 네트워크 상태 변경 이벤트 리스너
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+
+    // 서비스 워커 메시지 수신
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data.type === 'SYNC_DATA') {
+          console.log('데이터 동기화 완료:', event.data.payload);
+          
+          // 동기화 완료 알림 표시
+          const notification = document.createElement('div');
+          notification.textContent = '데이터가 동기화되었습니다!';
+          notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #22c55e;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+          `;
+          
+          document.body.appendChild(notification);
+          
+          setTimeout(() => {
+            notification.remove();
+          }, 3000);
+        }
+      });
+    }
+
+    // 키보드 단축키 (R: 새로고침, Escape: 홈으로)
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'r' || event.key === 'R') {
+        event.preventDefault();
+        retryConnection();
+      } else if (event.key === 'Escape') {
+        window.location.href = '/';
+      }
+    });
+
+    // 슬라이드 인 애니메이션 추가
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html> 

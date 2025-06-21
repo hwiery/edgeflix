@@ -4,6 +4,7 @@ import { useStore, Content } from '../store/useStore';
 import ContentDetailModal from './ContentDetailModal';
 import VideoPlayer from './VideoPlayer';
 import { ContentCardSkeleton } from './ui/skeleton';
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
 interface ContentCardProps {
   content: Content;
@@ -15,6 +16,13 @@ const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
   const [isVideoPlayerOpen, setIsVideoPlayerOpen] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [hasImageError, setHasImageError] = useState(false);
+  
+  // Intersection Observer 훅 사용
+  const { elementRef, hasIntersected } = useIntersectionObserver({
+    threshold: 0.1,
+    rootMargin: '50px',
+    triggerOnce: true
+  });
   
   // Zustand 스토어에서 상태와 액션 가져오기
   const { bookmarkedContent, toggleBookmark } = useStore();
@@ -53,9 +61,19 @@ const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
     setIsModalOpen(true);
   };
 
+  // 컴포넌트가 뷰포트에 진입하지 않았으면 스켈레톤 표시
+  if (!hasIntersected) {
+    return (
+      <div ref={elementRef as React.RefObject<HTMLDivElement>}>
+        <ContentCardSkeleton />
+      </div>
+    );
+  }
+
   return (
     <>
       <div 
+        ref={elementRef as React.RefObject<HTMLDivElement>}
         className="relative min-w-[280px] md:min-w-[320px] cursor-pointer transform transition-all duration-300 hover:scale-105"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -84,6 +102,7 @@ const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
                 isImageLoading ? 'opacity-0' : 'opacity-100'
               }`}
               loading="lazy"
+              decoding="async"
               onLoad={() => setIsImageLoading(false)}
               onError={() => {
                 setIsImageLoading(false);

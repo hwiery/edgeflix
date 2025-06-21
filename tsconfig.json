@@ -5,16 +5,58 @@
       { "path": "./tsconfig.node.json" }
     ],
     "compilerOptions": {
+      "target": "ES2020",
+      "useDefineForClassFields": true,
+      "lib": ["ES2020", "DOM", "DOM.Iterable"],
+      "module": "ESNext",
+      "skipLibCheck": true,
+
+      /* Bundler mode */
+      "moduleResolution": "bundler",
+      "allowImportingTsExtensions": true,
+      "isolatedModules": true,
+      "moduleDetection": "force",
+      "noEmit": true,
+      "jsx": "react-jsx",
+
+      /* Linting */
+      "strict": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noFallthroughCasesInSwitch": true,
+      "noImplicitReturns": true,
+      "noImplicitOverride": true,
+      "noPropertyAccessFromIndexSignature": true,
+      "noUncheckedIndexedAccess": true,
+      "exactOptionalPropertyTypes": true,
+
+      /* Path mapping */
       "baseUrl": ".",
       "paths": {
-        "@/*": ["./src/*"]
+        "@/*": ["src/*"],
+        "@/components/*": ["src/compoments/*"],
+        "@/hooks/*": ["src/hooks/*"],
+        "@/lib/*": ["src/lib/*"],
+        "@/services/*": ["src/services/*"],
+        "@/store/*": ["src/store/*"],
+        "@/pages/*": ["src/pages/*"]
       },
-      "noImplicitAny": false,
-      "noUnusedParameters": false,
-      "skipLibCheck": true,
-      "allowJs": true,
-      "noUnusedLocals": false,
-      "strictNullChecks": false
+
+      /* Type checking */
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "resolveJsonModule": true,
+      "allowJs": false,
+      "checkJs": false,
+      
+      /* Advanced */
+      "removeComments": false,
+      "sourceMap": true,
+      "declaration": false,
+      "declarationMap": false,
+      "incremental": true,
+      "tsBuildInfoFile": ".tsbuildinfo"
     }
   }
   

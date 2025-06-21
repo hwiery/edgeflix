@@ -1,28 +1,169 @@
-
 <!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/placeholder.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EDGEFLIX - 프리미엄 스트리밍 플랫폼</title>
-    <meta name="description" content="EDGEFLIX에서 최고의 콘텐츠를 만나보세요. 프리미엄 영화, 시리즈, 다큐멘터리를 언제 어디서나 스트리밍하세요." />
-    <meta name="author" content="EDGEFLIX" />
-
-    <meta property="og:title" content="EDGEFLIX - 프리미엄 스트리밍 플랫폼" />
-    <meta property="og:description" content="EDGEFLIX에서 최고의 콘텐츠를 만나보세요. 프리미엄 영화, 시리즈, 다큐멘터리를 언제 어디서나 스트리밍하세요." />
+    
+    <!-- PWA 메타 태그들 -->
+    <meta name="theme-color" content="#dc2626" />
+    <meta name="description" content="현대적인 React + TypeScript + Firebase로 구축된 넷플릭스 스타일의 스트리밍 플랫폼" />
+    <meta name="keywords" content="Netflix, 스트리밍, 영화, TV쇼, React, TypeScript, EdgeFlix" />
+    <meta name="author" content="EdgeFlix Team" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- iOS Safari 메타 태그들 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="EdgeFlix" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    <link rel="apple-touch-startup-image" href="/icons/icon-512x512.png" />
+    
+    <!-- Android Chrome 메타 태그들 -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="EdgeFlix" />
+    
+    <!-- Microsoft 타일 설정 -->
+    <meta name="msapplication-TileColor" content="#dc2626" />
+    <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Open Graph 메타 태그들 (소셜 미디어 공유) -->
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-
+    <meta property="og:title" content="EdgeFlix - Netflix Style Streaming Platform" />
+    <meta property="og:description" content="현대적인 React + TypeScript + Firebase로 구축된 넷플릭스 스타일의 스트리밍 플랫폼" />
+    <meta property="og:image" content="/icons/icon-512x512.png" />
+    <meta property="og:url" content="https://edgeflix.vercel.app" />
+    <meta property="og:site_name" content="EdgeFlix" />
+    
+    <!-- Twitter Card 메타 태그들 -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@edgeflix" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="twitter:title" content="EdgeFlix - Netflix Style Streaming Platform" />
+    <meta name="twitter:description" content="현대적인 React + TypeScript + Firebase로 구축된 넷플릭스 스타일의 스트리밍 플랫폼" />
+    <meta name="twitter:image" content="/icons/icon-512x512.png" />
+    
+    <!-- 성능 최적화 -->
+    <link rel="preconnect" href="https://api.themoviedb.org" />
+    <link rel="preconnect" href="https://image.tmdb.org" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <title>EdgeFlix - Netflix Style Streaming Platform</title>
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- 서비스 워커 등록 -->
+    <script>
+      // 서비스 워커 등록 (프로덕션 환경에서만)
+      if ('serviceWorker' in navigator && import.meta.env.PROD) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', {
+            scope: '/',
+            updateViaCache: 'none'
+          })
+          .then((registration) => {
+            console.log('[SW] Service Worker registered successfully:', registration.scope);
+            
+            // 업데이트 확인
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // 새 버전 사용 가능 알림
+                    if (confirm('새로운 버전이 사용 가능합니다. 지금 업데이트하시겠습니까?')) {
+                      newWorker.postMessage({ action: 'skipWaiting' });
+                      window.location.reload();
+                    }
+                  }
+                });
+              }
+            });
+          })
+          .catch((error) => {
+            console.error('[SW] Service Worker registration failed:', error);
+          });
+        });
+      }
+
+      // PWA 설치 프롬프트 처리
+      let deferredPrompt;
+      
+      window.addEventListener('beforeinstallprompt', (event) => {
+        console.log('[PWA] Install prompt available');
+        
+        // 기본 설치 프롬프트 방지
+        event.preventDefault();
+        deferredPrompt = event;
+        
+        // 사용자 정의 설치 버튼 표시 (향후 구현 가능)
+        const installButton = document.querySelector('#install-button');
+        if (installButton) {
+          installButton.style.display = 'block';
+          
+          installButton.addEventListener('click', () => {
+            installButton.style.display = 'none';
+            deferredPrompt.prompt();
+            
+            deferredPrompt.userChoice.then((choiceResult) => {
+              if (choiceResult.outcome === 'accepted') {
+                console.log('[PWA] User accepted the install prompt');
+              } else {
+                console.log('[PWA] User dismissed the install prompt');
+              }
+              deferredPrompt = null;
+            });
+          });
+        }
+      });
+
+      // PWA 설치 완료 이벤트
+      window.addEventListener('appinstalled', () => {
+        console.log('[PWA] App installed successfully');
+        deferredPrompt = null;
+        
+        // 설치 완료 알림 (Toast)
+        if (window.showToast) {
+          window.showToast('EdgeFlix가 성공적으로 설치되었습니다!', 'success');
+        }
+      });
+
+      // 온라인/오프라인 상태 감지
+      window.addEventListener('online', () => {
+        console.log('[Network] Online');
+        if (window.showToast) {
+          window.showToast('인터넷 연결이 복구되었습니다', 'success');
+        }
+      });
+
+      window.addEventListener('offline', () => {
+        console.log('[Network] Offline');
+        if (window.showToast) {
+          window.showToast('오프라인 모드로 전환되었습니다', 'warning');
+        }
+      });
+
+      // 성능 모니터링
+      if ('performance' in window && 'getEntriesByType' in performance) {
+        window.addEventListener('load', () => {
+          setTimeout(() => {
+            const navigation = performance.getEntriesByType('navigation')[0];
+            const paint = performance.getEntriesByType('paint');
+            
+            console.log('[Performance] Navigation timing:', {
+              domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+              loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
+              firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime,
+              largestContentfulPaint: paint.find(p => p.name === 'largest-contentful-paint')?.startTime
+            });
+          }, 0);
+        });
+      }
+    </script>
   </body>
 </html>

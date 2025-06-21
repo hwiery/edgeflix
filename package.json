@@ -1,14 +1,34 @@
 {
-    "name": "vite_react_shadcn_ts",
+    "name": "edgeflix",
     "private": true,
-    "version": "0.0.0",
+    "version": "1.0.0",
     "type": "module",
+    "description": "현대적인 React + TypeScript + Firebase로 구축된 넷플릭스 스타일의 스트리밍 플랫폼",
+    "author": "EdgeFlix Team",
+    "license": "MIT",
+    "keywords": ["react", "typescript", "netflix", "streaming", "firebase", "vite", "tailwindcss"],
+    "homepage": "https://edgeflix.vercel.app",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/hwiery/edgeflix.git"
+    },
+    "bugs": {
+        "url": "https://github.com/hwiery/edgeflix/issues"
+    },
     "scripts": {
         "dev": "vite",
         "build": "vite build",
         "build:dev": "vite build --mode development",
+        "build:prod": "vite build --mode production",
         "lint": "eslint .",
-        "preview": "vite preview"
+        "lint:fix": "eslint . --fix",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "type-check": "tsc --noEmit",
+        "preview": "vite preview",
+        "clean": "rm -rf dist .tsbuildinfo",
+        "prepare": "npm run clean && npm run type-check && npm run lint",
+        "deploy": "npm run prepare && npm run build:prod"
     },
     "dependencies": {
         "@hookform/resolvers": "^3.9.0",
@@ -77,11 +97,20 @@
         "eslint-plugin-react-hooks": "^5.1.0-rc.0",
         "eslint-plugin-react-refresh": "^0.4.9",
         "globals": "^15.9.0",
-        "lovable-tagger": "^1.1.7",
         "postcss": "^8.4.47",
+        "prettier": "^3.0.0",
         "tailwindcss": "^3.4.11",
         "typescript": "^5.5.3",
         "typescript-eslint": "^8.0.1",
         "vite": "^5.4.1"
-    }
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=9.0.0"
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not dead"
+    ]
 }

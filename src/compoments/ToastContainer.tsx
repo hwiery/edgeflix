@@ -1,16 +1,14 @@
 import React from 'react';
-import Toast, { ToastData } from './Toast';
-
-interface ToastContainerProps {
-  toasts: ToastData[];
-  onRemoveToast: (id: string) => void;
-}
+import Toast from './Toast';
+import { useStore } from '../store/useStore';
 
 /**
  * Toast 컨테이너 컴포넌트
- * 화면 우상단에 Toast들을 표시
+ * 화면 우상단에 Toast들을 표시하고 Zustand 스토어와 직접 연결됩니다
  */
-const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onRemoveToast }) => {
+const ToastContainer: React.FC = () => {
+  const { toasts, removeToast } = useStore();
+
   if (toasts.length === 0) return null;
 
   return (
@@ -19,7 +17,7 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onRemoveToast }
         <Toast
           key={toast.id}
           toast={toast}
-          onClose={onRemoveToast}
+          onClose={removeToast}
         />
       ))}
     </div>
