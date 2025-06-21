@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import { Search, Bell, User, Menu, X } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 
 const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
   
   // Zustand 스토어에서 상태와 액션 가져오기
   const { searchTerm, setSearchTerm, bookmarkedContent } = useStore();
 
-  const navItems = ['홈', '탐색', '영화', '시리즈', '내가 찜한 콘텐츠'];
+  const navItems = [
+    { label: '홈', path: '/' },
+    { label: '탐색', path: '/' },
+    { label: '영화', path: '/' },
+    { label: '시리즈', path: '/' },
+    { label: '내가 찜한 콘텐츠', path: '/my-list' }
+  ];
 
   /**
    * 검색어 입력 핸들러
@@ -42,14 +51,20 @@ const Header = () => {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-6">
               {navItems.map((item, index) => (
-                <a
+                <button
                   key={index}
-                  href="#"
-                  className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200 relative group"
+                  onClick={() => navigate(item.path)}
+                  className={`text-sm font-medium transition-colors duration-200 relative group ${
+                    location.pathname === item.path 
+                      ? 'text-white' 
+                      : 'text-gray-300 hover:text-white'
+                  }`}
                 >
-                  {item}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-600 transition-all duration-200 group-hover:w-full"></span>
-                </a>
+                  {item.label}
+                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-red-600 transition-all duration-200 ${
+                    location.pathname === item.path ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}></span>
+                </button>
               ))}
             </nav>
           </div>
@@ -117,13 +132,17 @@ const Header = () => {
           <nav className="md:hidden mt-4 pb-4 border-t border-white/10 pt-4">
             <div className="flex flex-col space-y-3">
               {navItems.map((item, index) => (
-                <a
+                <button
                   key={index}
-                  href="#"
-                  className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200 py-2"
+                  onClick={() => navigate(item.path)}
+                  className={`text-sm font-medium transition-colors duration-200 py-2 text-left ${
+                    location.pathname === item.path 
+                      ? 'text-white' 
+                      : 'text-gray-300 hover:text-white'
+                  }`}
                 >
-                  {item}
-                </a>
+                  {item.label}
+                </button>
               ))}
               <div className="flex items-center space-x-4 pt-2">
                 <button className="p-2 text-gray-300 hover:text-white transition-colors duration-200">
