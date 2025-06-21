@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Play, Plus, ChevronDown, Check } from 'lucide-react';
 import { useStore, Content } from '../store/useStore';
 import ContentDetailModal from './ContentDetailModal';
+import VideoPlayer from './VideoPlayer';
 import { ContentCardSkeleton } from './ui/skeleton';
 
 interface ContentCardProps {
@@ -11,6 +12,7 @@ interface ContentCardProps {
 const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVideoPlayerOpen, setIsVideoPlayerOpen] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [hasImageError, setHasImageError] = useState(false);
   
@@ -29,12 +31,11 @@ const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
   };
 
   /**
-   * 재생 버튼 클릭 핸들러
+   * 재생 버튼 클릭 핸들러 - 비디오 플레이어 열기
    */
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // TODO: 실제 재생 로직 구현
-    console.log(`재생: ${content.title}`);
+    setIsVideoPlayerOpen(true);
   };
 
   /**
@@ -168,8 +169,43 @@ const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
+      {/* 비디오 플레이어 */}
+      {isVideoPlayerOpen && (
+        <VideoPlayer
+          url={getVideoUrl(content)}
+          title={content.title}
+          onClose={() => setIsVideoPlayerOpen(false)}
+          autoPlay={true}
+        />
+      )}
     </>
   );
+};
+
+/**
+ * 콘텐츠별 비디오 URL 가져오기 (데모용)
+ */
+const getVideoUrl = (content: Content): string => {
+  // 실제 구현에서는 TMDB API에서 트레일러 URL을 가져와야 합니다
+  // 현재는 데모용 YouTube 비디오 URL을 반환합니다
+  const demoVideos: Record<string, string> = {
+    'The Matrix Resurrections': 'https://www.youtube.com/watch?v=9ix7TUGVYIo',
+    'Ocean Waves': 'https://www.youtube.com/watch?v=K4DyBUG242c',
+    'Starlight': 'https://www.youtube.com/watch?v=BgAlQuqzl8o',
+    'Digital Dreams': 'https://www.youtube.com/watch?v=qQwJMTNBXQU',
+    'Midnight Stories': 'https://www.youtube.com/watch?v=3sLjHjfNfow',
+    'Urban Legends': 'https://www.youtube.com/watch?v=n9xhJrPXop4'
+  };
+
+  // 콘텐츠 제목으로 비디오 URL 찾기
+  const videoUrl = demoVideos[content.title];
+  if (videoUrl) {
+    return videoUrl;
+  }
+
+  // 기본 데모 비디오 (Big Buck Bunny)
+  return 'https://www.youtube.com/watch?v=aqz-KE-bpKQ';
 };
 
 export default ContentCard;

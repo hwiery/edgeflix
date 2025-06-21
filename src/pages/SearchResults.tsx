@@ -4,7 +4,10 @@ import { ArrowLeft, Filter, SlidersHorizontal, X } from 'lucide-react';
 import Header from '../compoments/Header';
 import Footer from '../compoments/Footer';
 import ContentCard from '../compoments/ContextCard';
+import { SearchResultsSkeleton } from '../compoments/ui/skeleton';
 import { useStore, Content } from '../store/useStore';
+import { useSearchMulti } from '../hooks/useTMDB';
+import { tmdbApi } from '../services/tmdbApi';
 
 /**
  * 검색 결과 페이지
@@ -19,8 +22,16 @@ const SearchResults = () => {
   const [selectedYear, setSelectedYear] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('relevance');
 
-  // 전체 콘텐츠 가져오기 (실제로는 API에서 가져올 데이터)
-  const allContent: Content[] = [
+  // TMDB API 검색 데이터
+  const isApiKeyValid = tmdbApi.isApiKeyValid();
+  const { data: searchResults, isLoading: searchLoading } = useSearchMulti(
+    query, 
+    1, 
+    !!query && isApiKeyValid
+  );
+
+  // 더미 데이터 (API 키가 없거나 검색어가 없을 때)
+  const dummyContent: Content[] = [
     // 트렌딩 콘텐츠
     {
       id: 1,
@@ -124,17 +135,20 @@ const SearchResults = () => {
     }
   ];
 
+  // 사용할 데이터 결정
+  const allContent = searchResults || dummyContent;
+
   // 장르 목록 추출
   const genres = useMemo(() => {
     const uniqueGenres = [...new Set(allContent.map(content => content.genre))];
     return ['all', ...uniqueGenres];
-  }, []);
+  }, [allContent]);
 
   // 연도 목록 추출
   const years = useMemo(() => {
     const uniqueYears = [...new Set(allContent.map(content => content.year))].sort((a, b) => b.localeCompare(a));
     return ['all', ...uniqueYears];
-  }, []);
+  }, [allContent]);
 
   /**
    * 검색 및 필터링된 결과
@@ -216,9 +230,21 @@ const SearchResults = () => {
             <h1 className="text-3xl md:text-4xl font-bold">
               {query ? `"${query}" 검색 결과` : '모든 콘텐츠'}
             </h1>
-            <p className="text-gray-400 mt-1">
-              총 <span className="text-white font-semibold">{filteredContent.length}개</span>의 결과를 찾았습니다.
-            </p>
+            <div className="flex items-center space-x-4 mt-1">
+              <p className="text-gray-400">
+                총 <span className="text-white font-semibold">{filteredContent.length}개</span>의 결과를 찾았습니다.
+              </p>
+              {!isApiKeyValid && (
+                <div className="bg-yellow-600/20 border border-yellow-600/30 rounded px-2 py-1">
+                  <span className="text-yellow-400 text-xs">샘플 데이터</span>
+                </div>
+              )}
+              {isApiKeyValid && query && (
+                <div className="bg-green-600/20 border border-green-600/30 rounded px-2 py-1">
+                  <span className="text-green-400 text-xs">TMDB 실제 데이터</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -295,7 +321,9 @@ const SearchResults = () => {
 
       {/* 검색 결과 */}
       <main className="px-4 md:px-8 lg:px-12 pb-20">
-        {filteredContent.length > 0 ? (
+        {searchLoading ? (
+          <SearchResultsSkeleton />
+        ) : filteredContent.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
             {filteredContent.map((content) => (
               <div key={content.id} className="w-full">

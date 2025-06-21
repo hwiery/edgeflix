@@ -4,10 +4,41 @@ import HeroSection from '../compoments/HeroSection';
 import ContentRow from '../compoments/ContextRow';
 import Footer from '../compoments/Footer';
 import { Content } from '../store/useStore';
+import { 
+  useTrending, 
+  usePopularMovies, 
+  usePopularTVShows, 
+  useTopRatedMovies,
+  useDummyTrending,
+  useDummyPopularMovies,
+  useDummyPopularTVShows
+} from '../hooks/useTMDB';
+import { ContentRowSkeleton } from '../compoments/ui/skeleton';
+import { tmdbApi } from '../services/tmdbApi';
 
 const Index = () => {
-  // 트렌딩 콘텐츠 데이터
-  const trendingContent: Content[] = [
+  // TMDB API 데이터 가져오기
+  const isApiKeyValid = tmdbApi.isApiKeyValid();
+  
+  // 실제 API 데이터
+  const { data: trendingData, isLoading: trendingLoading } = useTrending('all', 'week');
+  const { data: popularMoviesData, isLoading: moviesLoading } = usePopularMovies(1);
+  const { data: popularTVData, isLoading: tvLoading } = usePopularTVShows(1);
+  const { data: topRatedData, isLoading: topRatedLoading } = useTopRatedMovies(1);
+  
+  // 더미 데이터 (API 키가 없을 때)
+  const { data: dummyTrendingData } = useDummyTrending();
+  const { data: dummyMoviesData } = useDummyPopularMovies();
+  const { data: dummyTVData } = useDummyPopularTVShows();
+
+  // 사용할 데이터 결정
+  const trendingContent = isApiKeyValid ? trendingData : dummyTrendingData;
+  const popularMovies = isApiKeyValid ? popularMoviesData : dummyMoviesData;
+  const popularTVShows = isApiKeyValid ? popularTVData : dummyTVData;
+  const topRatedMovies = isApiKeyValid ? topRatedData : dummyMoviesData;
+  
+  // 기존 더미 데이터 (백업용)
+  const fallbackTrendingContent: Content[] = [
     {
       id: 1,
       title: "The Matrix Resurrections",
@@ -174,18 +205,61 @@ const Index = () => {
       <HeroSection />
       
       <main className="px-4 md:px-8 lg:px-12 pb-20">
-        <ContentRow 
-          title="지금 뜨는 콘텐츠" 
-          content={trendingContent}
-        />
-        <ContentRow 
-          title="내가 좋아할 만한 콘텐츠" 
-          content={recommendedContent}
-        />
-        <ContentRow 
-          title="최신 추가" 
-          content={newReleases}
-        />
+        {/* API 키 상태 알림 */}
+        {!isApiKeyValid && (
+          <div className="mb-8 bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-4">
+            <div className="flex items-center space-x-2">
+              <div className="text-yellow-400">⚠️</div>
+              <div>
+                <h3 className="text-yellow-400 font-semibold">TMDB API 키가 설정되지 않았습니다</h3>
+                <p className="text-yellow-300 text-sm mt-1">
+                  실제 영화 데이터를 보려면 .env 파일에 VITE_TMDB_API_KEY를 설정하세요. 
+                  현재는 샘플 데이터를 표시합니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 트렌딩 콘텐츠 */}
+        {trendingLoading ? (
+          <ContentRowSkeleton />
+        ) : (
+          <ContentRow 
+            title={isApiKeyValid ? "🔥 지금 뜨는 콘텐츠" : "📱 샘플 트렌딩 콘텐츠"} 
+            content={trendingContent || fallbackTrendingContent}
+          />
+        )}
+
+        {/* 인기 영화 */}
+        {moviesLoading ? (
+          <ContentRowSkeleton />
+        ) : (
+          <ContentRow 
+            title={isApiKeyValid ? "🎬 인기 영화" : "📱 샘플 인기 영화"} 
+            content={popularMovies || fallbackTrendingContent}
+          />
+        )}
+
+        {/* 인기 TV 프로그램 */}
+        {tvLoading ? (
+          <ContentRowSkeleton />
+        ) : (
+          <ContentRow 
+            title={isApiKeyValid ? "📺 인기 TV 프로그램" : "📱 샘플 TV 프로그램"} 
+            content={popularTVShows || fallbackTrendingContent}
+          />
+        )}
+
+        {/* 높은 평점 영화 */}
+        {topRatedLoading ? (
+          <ContentRowSkeleton />
+        ) : (
+          <ContentRow 
+            title={isApiKeyValid ? "⭐ 높은 평점 영화" : "📱 샘플 높은 평점"} 
+            content={topRatedMovies || fallbackTrendingContent}
+          />
+        )}
       </main>
       
       <Footer />
