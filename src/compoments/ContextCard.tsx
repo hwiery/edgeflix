@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Play, Plus, ChevronDown, Check } from 'lucide-react';
 import { useStore, Content } from '../store/useStore';
 import ContentDetailModal from './ContentDetailModal';
+import { ContentCardSkeleton } from './ui/skeleton';
 
 interface ContentCardProps {
   content: Content;
@@ -10,6 +11,8 @@ interface ContentCardProps {
 const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(true);
+  const [hasImageError, setHasImageError] = useState(false);
   
   // Zustand 스토어에서 상태와 액션 가져오기
   const { bookmarkedContent, toggleBookmark } = useStore();
@@ -59,12 +62,34 @@ const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
       >
         {/* Main Image */}
         <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-900">
-          <img
-            src={content.image}
-            alt={content.title}
-            className="w-full h-full object-cover transition-transform duration-300"
-            loading="lazy"
-          />
+          {/* 로딩 스켈레톤 */}
+          {isImageLoading && !hasImageError && (
+            <div className="absolute inset-0 bg-gray-800 animate-pulse" />
+          )}
+          
+          {/* 이미지 로드 에러 시 플레이스홀더 */}
+          {hasImageError ? (
+            <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
+              <div className="text-center text-gray-400">
+                <div className="text-4xl mb-2">🎬</div>
+                <div className="text-sm">이미지를 불러올 수 없습니다</div>
+              </div>
+            </div>
+          ) : (
+            <img
+              src={content.image}
+              alt={content.title}
+              className={`w-full h-full object-cover transition-all duration-300 ${
+                isImageLoading ? 'opacity-0' : 'opacity-100'
+              }`}
+              loading="lazy"
+              onLoad={() => setIsImageLoading(false)}
+              onError={() => {
+                setIsImageLoading(false);
+                setHasImageError(true);
+              }}
+            />
+          )}
           
           {/* Overlay on Hover */}
           <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>

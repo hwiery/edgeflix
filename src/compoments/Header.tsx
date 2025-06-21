@@ -28,6 +28,26 @@ const Header = () => {
   };
 
   /**
+   * 검색 실행 핸들러
+   */
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+      setIsSearchOpen(false);
+    }
+  };
+
+  /**
+   * 검색어 엔터키 핸들러
+   */
+  const handleSearchKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearchSubmit(e as any);
+    }
+  };
+
+  /**
    * 검색 모드 토글 핸들러
    */
   const handleSearchToggle = () => {
@@ -74,24 +94,31 @@ const Header = () => {
             {/* Search */}
             <div className="relative">
               {isSearchOpen ? (
-                <div className="flex items-center bg-black/50 rounded-full px-4 py-2 backdrop-blur-sm border border-white/20">
-                  <Search className="w-4 h-4 text-gray-400 mr-2" />
-                  <input
-                    type="text"
-                    placeholder="검색..."
-                    className="bg-transparent text-white placeholder-gray-400 outline-none w-48"
-                    value={searchTerm}
-                    onChange={handleSearchInput}
-                    autoFocus
-                    onBlur={() => setIsSearchOpen(false)}
-                  />
-                  <button
-                    onClick={handleSearchToggle}
-                    className="ml-2 text-gray-400 hover:text-white"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
+                <form onSubmit={handleSearchSubmit}>
+                  <div className="flex items-center bg-black/50 rounded-full px-4 py-2 backdrop-blur-sm border border-white/20">
+                    <Search className="w-4 h-4 text-gray-400 mr-2" />
+                    <input
+                      type="text"
+                      placeholder="제목, 장르로 검색..."
+                      className="bg-transparent text-white placeholder-gray-400 outline-none w-48"
+                      value={searchTerm}
+                      onChange={handleSearchInput}
+                      onKeyPress={handleSearchKeyPress}
+                      autoFocus
+                      onBlur={(e) => {
+                        // 검색 버튼 클릭이 아닐 때만 닫기
+                        setTimeout(() => setIsSearchOpen(false), 200);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSearchToggle}
+                      className="ml-2 text-gray-400 hover:text-white"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </form>
               ) : (
                 <button
                   onClick={handleSearchToggle}

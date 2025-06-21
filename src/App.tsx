@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import MyList from "./pages/MyList";
+import SearchResults from "./pages/SearchResults";
+import Genre from "./pages/Genre";
 import ToastContainer from "./compoments/ToastContainer";
 import { useStore } from "./store/useStore";
 
@@ -17,6 +19,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/my-list" element={<MyList />} />
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/genre" element={<Genre />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
