@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import ReactPlayer from 'react-player';
 import { 
   Play, 
@@ -89,21 +89,21 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   /**
    * 재생/일시정지 토글
    */
-  const togglePlay = () => {
+  const togglePlay = useCallback(() => {
     setPlaying(!playing);
-  };
+  }, [playing]);
 
   /**
    * 음소거 토글
    */
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     setMuted(!muted);
-  };
+  }, [muted]);
 
   /**
    * 전체화면 토글
    */
-  const toggleFullscreen = () => {
+  const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement && containerRef.current) {
       containerRef.current.requestFullscreen();
       setFullscreen(true);
@@ -111,25 +111,25 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       document.exitFullscreen();
       setFullscreen(false);
     }
-  };
+  }, []);
 
   /**
    * 10초 뒤로
    */
-  const seekBackward = () => {
+  const seekBackward = useCallback(() => {
     const currentTime = played * duration;
     const newTime = Math.max(0, currentTime - 10);
     playerRef.current?.seekTo(newTime / duration);
-  };
+  }, [played, duration]);
 
   /**
    * 10초 앞으로
    */
-  const seekForward = () => {
+  const seekForward = useCallback(() => {
     const currentTime = played * duration;
     const newTime = Math.min(duration, currentTime + 10);
     playerRef.current?.seekTo(newTime / duration);
-  };
+  }, [played, duration]);
 
   /**
    * 시간 포맷팅 (초 → MM:SS)
@@ -193,7 +193,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
     document.addEventListener('keydown', handleKeyPress);
     return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [playing, volume]);
+  }, [togglePlay, seekBackward, seekForward, toggleMute, toggleFullscreen, onClose]);
 
   /**
    * 전체화면 변경 감지

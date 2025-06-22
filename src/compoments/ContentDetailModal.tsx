@@ -64,6 +64,25 @@ export default function ContentDetailModal({ content, isOpen, onClose }: Content
     setIsReviewModalOpen(true);
   };
 
+  // 비디오 URL 생성 함수
+  const getVideoUrl = (content: Content): string => {
+    // 콘텐츠 제목을 기반으로 YouTube 데모 비디오 매핑
+    const videoMap: { [key: string]: string } = {
+      'Stranger Things': 'https://www.youtube.com/watch?v=b9EkMc79ZSU',
+      'The Crown': 'https://www.youtube.com/watch?v=JWtnJjn6ng0',
+      'Money Heist': 'https://www.youtube.com/watch?v=_InqQJRqGW4',
+      'Squid Game': 'https://www.youtube.com/watch?v=oqxAJKy0ii4',
+      'Wednesday': 'https://www.youtube.com/watch?v=Di310WS8zLk',
+      'The Witcher': 'https://www.youtube.com/watch?v=ndl1W4ltcmg',
+      'Ozark': 'https://www.youtube.com/watch?v=5hAXVqrljbs',
+      'Dark': 'https://www.youtube.com/watch?v=rrwycJ08PSA',
+      'Bridgerton': 'https://www.youtube.com/watch?v=gpv7ayf_tyE',
+      'Lupin': 'https://www.youtube.com/watch?v=ga0iTWXCGa0',
+    };
+    
+    return videoMap[content.title] || 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'; // 기본 비디오
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -223,12 +242,14 @@ export default function ContentDetailModal({ content, isOpen, onClose }: Content
       </div>
 
       {/* 비디오 플레이어 */}
-      <VideoPlayer
-        isOpen={isVideoOpen}
-        onClose={() => setIsVideoOpen(false)}
-        title={content.title}
-        videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-      />
+      {isVideoOpen && (
+        <VideoPlayer
+          url={getVideoUrl(content)}
+          title={content.title}
+          onClose={() => setIsVideoOpen(false)}
+          autoPlay={true}
+        />
+      )}
 
       {/* 평점 모달 */}
       <RatingModal
