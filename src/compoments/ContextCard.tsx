@@ -39,11 +39,11 @@ const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
   };
 
   /**
-   * 재생 버튼 클릭 핸들러 - 비디오 플레이어 열기
+   * 재생 버튼 클릭 핸들러 - 상세 모달 먼저 열기
    */
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsVideoPlayerOpen(true);
+    setIsModalOpen(true);
   };
 
   /**
