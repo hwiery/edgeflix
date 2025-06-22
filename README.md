@@ -11,7 +11,7 @@
 
 ## 🚀 라이브 데모
 
-**[EdgeFlix 바로가기](https://edgeflix.vercel.app)** - 지금 바로 체험해보세요!
+**[EdgeFlix 바로가기](https://edgeflix-nymu.vercel.app)** - 지금 바로 체험해보세요!
 
 ## ✨ 주요 기능
 
@@ -203,7 +203,7 @@ npm run clean
 
 ## 🔗 링크
 
-- **라이브 데모**: [https://edgeflix.vercel.app](https://edgeflix.vercel.app)
+- **라이브 데모**: [https://edgeflix-nymu.vercel.app](https://edgeflix-nymu.vercel.app)
 - **GitHub 저장소**: [https://github.com/hwiery/edgeflix](https://github.com/hwiery/edgeflix)
 - **이슈 트래커**: [https://github.com/hwiery/edgeflix/issues](https://github.com/hwiery/edgeflix/issues)
 

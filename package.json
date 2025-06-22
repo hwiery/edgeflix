@@ -7,7 +7,7 @@
     "author": "EdgeFlix Team",
     "license": "MIT",
     "keywords": ["react", "typescript", "netflix", "streaming", "firebase", "vite", "tailwindcss"],
-    "homepage": "https://edgeflix.vercel.app",
+    "homepage": "https://edgeflix-nymu.vercel.app",
     "repository": {
         "type": "git",
         "url": "https://github.com/hwiery/edgeflix.git"
