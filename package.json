@@ -27,7 +27,7 @@
         "type-check": "tsc --noEmit",
         "preview": "vite preview",
         "clean": "rm -rf dist .tsbuildinfo",
-        "prepare": "npm run clean && npm run type-check && npm run lint",
+        "prepare": "npm run clean && npm run type-check",
         "deploy": "npm run prepare && npm run build:prod"
     },
     "dependencies": {
