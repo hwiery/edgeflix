@@ -27,18 +27,37 @@ import {
 
 // Firebase 설정
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'dummy-api-key',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'dummy-project.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'dummy-project',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'dummy-project.appspot.com',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '123456789',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:123456789:web:abcdef123456',
 };
 
+// Firebase 환경변수 확인
+const isFirebaseConfigured = import.meta.env.VITE_FIREBASE_API_KEY && 
+  import.meta.env.VITE_FIREBASE_API_KEY !== 'dummy-api-key';
+
 // Firebase 초기화
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+let app: any = null;
+let auth: any = null;
+let db: any = null;
+
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  
+  if (!isFirebaseConfigured) {
+    console.warn('⚠️ Firebase 환경변수가 설정되지 않았습니다. 인증 기능이 제한됩니다.');
+  }
+} catch (error) {
+  console.error('Firebase 초기화 실패:', error);
+  console.warn('Firebase 기능이 비활성화됩니다. FIREBASE_SETUP.md를 참조하여 설정하세요.');
+}
+
+export { auth, db, isFirebaseConfigured };
 
 // Google 로그인 프로바이더
 const googleProvider = new GoogleAuthProvider();

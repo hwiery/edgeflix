@@ -1,7 +1,7 @@
 // 인증 모달 컴포넌트 (로그인/회원가입)
 import React, { useState } from 'react';
 import { X, Mail, Lock, User, Loader2 } from 'lucide-react';
-import { authService } from '../services/firebase';
+import { authService, isFirebaseConfigured } from '../services/firebase';
 import { useStore } from '../store/useStore';
 
 interface AuthModalProps {

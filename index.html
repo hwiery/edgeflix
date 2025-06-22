@@ -18,8 +18,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="EdgeFlix" />
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-    <link rel="apple-touch-startup-image" href="/icons/icon-512x512.png" />
+    <link rel="apple-touch-icon" href="/icons/icon.svg" />
+    <link rel="apple-touch-startup-image" href="/icons/icon.svg" />
     
     <!-- Android Chrome 메타 태그들 -->
     <meta name="mobile-web-app-capable" content="yes" />
@@ -27,14 +27,14 @@
     
     <!-- Microsoft 타일 설정 -->
     <meta name="msapplication-TileColor" content="#dc2626" />
-    <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
+    <meta name="msapplication-TileImage" content="/icons/icon.svg" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
     
     <!-- Open Graph 메타 태그들 (소셜 미디어 공유) -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="EdgeFlix - Netflix Style Streaming Platform" />
     <meta property="og:description" content="현대적인 React + TypeScript + Firebase로 구축된 넷플릭스 스타일의 스트리밍 플랫폼" />
-    <meta property="og:image" content="/icons/icon-512x512.png" />
+    <meta property="og:image" content="/icons/icon.svg" />
     <meta property="og:url" content="https://edgeflix-nymu.vercel.app" />
     <meta property="og:site_name" content="EdgeFlix" />
     
@@ -42,7 +42,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="EdgeFlix - Netflix Style Streaming Platform" />
     <meta name="twitter:description" content="현대적인 React + TypeScript + Firebase로 구축된 넷플릭스 스타일의 스트리밍 플랫폼" />
-    <meta name="twitter:image" content="/icons/icon-512x512.png" />
+    <meta name="twitter:image" content="/icons/icon.svg" />
     
     <!-- 성능 최적화 -->
     <link rel="preconnect" href="https://api.themoviedb.org" />
@@ -60,7 +60,7 @@
     <!-- 서비스 워커 등록 -->
     <script>
       // 서비스 워커 등록 (프로덕션 환경에서만)
-      if ('serviceWorker' in navigator && import.meta.env.PROD) {
+      if ('serviceWorker' in navigator && location.hostname !== 'localhost') {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js', {
             scope: '/',
